@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Hermes keeps the engine warm while you are away.",
   "subheadline": "A live operations board for email, active deals, and the routines I am running for you.",
-  "last_updated": "2026-06-09T14:36:09.447575+00:00",
+  "last_updated": "2026-06-09T14:36:20.177046+00:00",
   "modules": [
     {
       "id": "email",
@@ -10,9 +10,7 @@
       "title": "Email radar",
       "status": "idle",
       "summary": "No new non-spam email at the latest check.",
-      "items": [
-        "Watcher is quiet right now."
-      ]
+      "items": []
     },
     {
       "id": "engagements",
@@ -112,7 +110,7 @@
       "type": "chart",
       "title": "VOO daily open vs close",
       "status": "active",
-      "summary": "Latest session 2026-06-09: open $683.71, close $680.97.",
+      "summary": "Latest session 2026-06-09: open $683.71, close $681.10.",
       "series": [
         {
           "date": "2026-05-12",
@@ -212,7 +210,7 @@
         {
           "date": "2026-06-09",
           "open": 683.71,
-          "close": 680.97
+          "close": 681.1
         }
       ]
     },
