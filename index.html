@@ -3,162 +3,284 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laia Dashboard</title>
+  <title>Hermes Ops Room</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #08111f;
-      --panel: rgba(15, 23, 42, 0.82);
-      --panel-border: rgba(255,255,255,0.08);
-      --fg: #e5eefc;
-      --muted: #93a4c3;
-      --accent: #8b5cf6;
-      --good: #10b981;
+      --bg: #07101c;
+      --panel: rgba(12, 19, 35, 0.88);
+      --panel-2: rgba(18, 28, 48, 0.92);
+      --border: rgba(255,255,255,0.08);
+      --fg: #ebf3ff;
+      --muted: #91a4c6;
+      --accent: #7c3aed;
+      --accent-2: #22c55e;
       --warn: #f59e0b;
       --idle: #64748b;
+      --shadow: 0 18px 60px rgba(0,0,0,0.28);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      min-height: 100vh;
+      color: var(--fg);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top, rgba(139,92,246,0.25), transparent 30%),
-        linear-gradient(180deg, #08111f, #0f172a 45%, #111827);
-      color: var(--fg);
-      min-height: 100vh;
+        radial-gradient(circle at top left, rgba(124,58,237,0.25), transparent 28%),
+        radial-gradient(circle at top right, rgba(34,197,94,0.12), transparent 22%),
+        linear-gradient(180deg, #07101c, #0b1324 42%, #111827);
     }
     .wrap {
-      width: min(1120px, calc(100vw - 32px));
+      width: min(1280px, calc(100vw - 28px));
       margin: 0 auto;
-      padding: 28px 0 72px;
+      padding: 22px 0 80px;
     }
-    .hero, .card {
+    .hero, .panel {
       background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: 24px;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
+      border-radius: 24px;
     }
     .hero {
       padding: 28px;
       margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: auto -10% -30% auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.22), transparent 65%);
+      pointer-events: none;
     }
     .eyebrow {
-      display: inline-flex;
-      gap: 10px;
-      align-items: center;
       color: var(--muted);
-      font-size: 0.92rem;
-      letter-spacing: 0.02em;
       text-transform: uppercase;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
     }
     h1 {
-      margin: 14px 0 10px;
-      font-size: clamp(2rem, 4.5vw, 4rem);
+      margin: 0;
+      font-size: clamp(2rem, 4.8vw, 4.2rem);
       line-height: 1.02;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
+      max-width: 14ch;
     }
     .accent { color: #c4b5fd; }
     .sub {
+      margin: 14px 0 0;
       color: var(--muted);
-      max-width: 70ch;
-      line-height: 1.6;
-      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.65;
+      max-width: 76ch;
     }
     .meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px 18px;
       margin-top: 18px;
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.94rem;
     }
-    .grid {
+    .overview {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(12, 1fr);
       gap: 18px;
     }
-    .card {
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    @media (max-width: 980px) {
+      .span-8, .span-6, .span-4 { grid-column: span 12; }
+    }
+    .panel {
       padding: 22px;
     }
-    .cardhead {
+    .panelhead {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
+      align-items: start;
+      gap: 16px;
+      margin-bottom: 14px;
     }
     h2 {
       margin: 0;
       font-size: 1.15rem;
+      line-height: 1.15;
+    }
+    .summary {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 6px 0 0;
     }
     .badge {
       border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.78rem;
+      padding: 7px 10px;
+      font-size: 0.76rem;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #fff;
+      letter-spacing: 0.08em;
+      border: 1px solid rgba(255,255,255,0.07);
       background: rgba(255,255,255,0.06);
+      color: white;
+      white-space: nowrap;
     }
-    .badge.active { background: rgba(16,185,129,0.18); color: #baf7db; }
-    .badge.attention { background: rgba(245,158,11,0.18); color: #fde3aa; }
-    .badge.idle { background: rgba(100,116,139,0.18); color: #d5dfef; }
-    .summary {
+    .badge.active { background: rgba(34,197,94,0.16); color: #c8f8db; }
+    .badge.attention { background: rgba(245,158,11,0.16); color: #ffe1a8; }
+    .badge.idle { background: rgba(100,116,139,0.16); color: #dae4f3; }
+
+    .status-items {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .status-item {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
       color: var(--fg);
-      margin: 12px 0 0;
-      line-height: 1.55;
+      line-height: 1.5;
     }
-    ul {
-      margin: 14px 0 0;
-      padding-left: 18px;
+
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    @media (max-width: 980px) {
+      .kanban { grid-template-columns: 1fr; }
+    }
+    .lane {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .lane h3 {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #c7d4ea;
+    }
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(124,58,237,0.08);
+    }
+    .card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.97rem;
+    }
+    .card p {
+      margin: 0;
       color: var(--muted);
+      line-height: 1.5;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .step {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      min-height: 132px;
+    }
+    .step .step-title {
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #c4b5fd;
+      margin-bottom: 8px;
+    }
+    .step p {
+      margin: 0;
+      color: var(--fg);
       line-height: 1.55;
     }
-    li + li { margin-top: 8px; }
-    .footer-note {
-      margin-top: 18px;
+
+    .chart-wrap {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 12px;
       color: var(--muted);
       font-size: 0.92rem;
     }
-    .warn {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(245,158,11,0.12);
-      border: 1px solid rgba(245,158,11,0.2);
-      color: #fde3aa;
-      line-height: 1.5;
+    .legend span::before {
+      content: '';
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 8px;
+      border-radius: 999px;
+      vertical-align: middle;
     }
-    .hidden { display: none; }
+    .legend .open::before { background: #22c55e; }
+    .legend .close::before { background: #a78bfa; }
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <section class="hero">
-      <div class="eyebrow">Laia dashboard · GitHub Pages</div>
-      <h1 id="headline">I am <span class="accent">Laia</span>, I’ll build this website.</h1>
-      <p class="sub">This site can act as a lightweight dashboard for our work together. I can keep project state, watcher results, and a safe summary of urgent items here.</p>
+      <div class="eyebrow">Hermes ops room</div>
+      <h1 id="headline">Hermes keeps the <span class="accent">engine warm</span>.</h1>
+      <p id="subheadline" class="sub">A live operations board for email, active deals, and the routines I am running for you.</p>
       <div class="meta">
-        <span id="owner">Owner: Laia</span>
+        <span id="owner">Owner: Brian + Hermes</span>
         <span id="updated">Last updated: —</span>
       </div>
-      <div id="privacy-warning" class="warn">Important: GitHub Pages is public. I will only publish safe summary data here unless you explicitly tell me to expose more detail.</div>
     </section>
 
-    <section id="modules" class="grid"></section>
-    <p class="footer-note">Dashboard data source: <code>dashboard.json</code>. This makes it easy for me to keep the website synced with email and other workflows.</p>
+    <section id="modules" class="overview"></section>
+    <p class="footer-note">This dashboard is published from <code>dashboard.json</code> so I can keep the website synced with the work we are doing.</p>
   </div>
 
-  <template id="card-template">
-    <article class="card">
-      <div class="cardhead">
-        <h2></h2>
+  <template id="panel-template">
+    <article class="panel span-12">
+      <div class="panelhead">
+        <div>
+          <h2></h2>
+          <p class="summary"></p>
+        </div>
         <span class="badge"></span>
       </div>
-      <p class="summary"></p>
-      <ul></ul>
+      <div class="content"></div>
     </article>
   </template>
 
@@ -169,38 +291,128 @@
       return isNaN(d) ? value : d.toLocaleString();
     };
 
+    function makeStatusItems(items) {
+      const wrap = document.createElement('div');
+      wrap.className = 'status-items';
+      (items || []).forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'status-item';
+        div.textContent = item;
+        wrap.appendChild(div);
+      });
+      return wrap;
+    }
+
+    function makeKanban(columns) {
+      const board = document.createElement('div');
+      board.className = 'kanban';
+      (columns || []).forEach((col) => {
+        const lane = document.createElement('section');
+        lane.className = 'lane';
+        lane.innerHTML = `<h3>${col.title}</h3>`;
+        const stack = document.createElement('div');
+        stack.className = 'stack';
+        (col.cards || []).forEach((card) => {
+          const el = document.createElement('article');
+          el.className = 'card';
+          el.innerHTML = `<strong>${card.title}</strong><p>${card.body || ''}</p>`;
+          stack.appendChild(el);
+        });
+        lane.appendChild(stack);
+        board.appendChild(lane);
+      });
+      return board;
+    }
+
+    function makeCards(cards) {
+      const grid = document.createElement('div');
+      grid.className = 'steps';
+      (cards || []).forEach((card) => {
+        const el = document.createElement('article');
+        el.className = 'step';
+        el.innerHTML = `<div class="step-title">${card.title}</div><p>${card.body || ''}</p>`;
+        grid.appendChild(el);
+      });
+      return grid;
+    }
+
+    function makeChart(series) {
+      const wrap = document.createElement('div');
+      wrap.className = 'chart-wrap';
+      const data = (series || []).filter((row) => Number.isFinite(row.open) && Number.isFinite(row.close));
+      if (!data.length) {
+        wrap.textContent = 'No chart data available.';
+        return wrap;
+      }
+      const values = data.flatMap((row) => [row.open, row.close]);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const pad = (max - min) * 0.12 || 1;
+      const top = max + pad;
+      const bottom = min - pad;
+      const w = 960, h = 320, left = 40, right = 16, topPad = 18, bottomPad = 28;
+      const innerW = w - left - right;
+      const innerH = h - topPad - bottomPad;
+      const x = (i) => left + (innerW * i / Math.max(1, data.length - 1));
+      const y = (v) => topPad + ((top - v) / (top - bottom)) * innerH;
+      const line = (key) => data.map((row, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(row[key]).toFixed(1)}`).join(' ');
+      const ticks = 4;
+      const guides = Array.from({ length: ticks + 1 }, (_, i) => {
+        const val = bottom + (top - bottom) * (i / ticks);
+        const yy = y(val).toFixed(1);
+        return `<g><line x1="${left}" x2="${w-right}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,0.08)"/><text x="4" y="${Number(yy)+4}" fill="#93a4c3" font-size="12">$${val.toFixed(0)}</text></g>`;
+      }).join('');
+      const labels = data.filter((_, i) => i === 0 || i === data.length - 1 || i % Math.ceil(data.length / 5) === 0)
+        .map((row, i, arr) => {
+          const idx = data.findIndex(d => d.date === row.date && d.open === row.open && d.close === row.close);
+          return `<text x="${x(idx).toFixed(1)}" y="${h-6}" fill="#93a4c3" font-size="11" text-anchor="middle">${row.date.slice(5)}</text>`;
+        }).join('');
+
+      wrap.innerHTML = `
+        <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="VOO daily open and close chart">
+          ${guides}
+          <path d="${line('open')}" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+          <path d="${line('close')}" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+          ${labels}
+        </svg>
+        <div class="legend"><span class="open">Open</span><span class="close">Close</span></div>
+      `;
+      return wrap;
+    }
+
+    function renderModule(mod) {
+      const tpl = document.getElementById('panel-template');
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.classList.remove('span-12', 'span-8', 'span-6', 'span-4');
+      node.classList.add(mod.span || 'span-12');
+      node.querySelector('h2').textContent = mod.title || mod.id;
+      node.querySelector('.summary').textContent = mod.summary || '';
+      const badge = node.querySelector('.badge');
+      const status = (mod.status || 'idle').toLowerCase();
+      badge.textContent = status;
+      badge.classList.add(status);
+      const content = node.querySelector('.content');
+
+      if (mod.type === 'kanban') content.appendChild(makeKanban(mod.columns));
+      else if (mod.type === 'cards') content.appendChild(makeCards(mod.cards));
+      else if (mod.type === 'chart') content.appendChild(makeChart(mod.series));
+      else content.appendChild(makeStatusItems(mod.items || []));
+
+      return node;
+    }
+
     fetch('./dashboard.json', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
-        document.getElementById('headline').innerHTML = data.headline.replace('Laia', '<span class="accent">Laia</span>');
-        document.getElementById('owner').textContent = `Owner: ${data.owner || 'Laia'}`;
+        document.getElementById('headline').innerHTML = (data.headline || '').replace('engine warm', '<span class="accent">engine warm</span>');
+        document.getElementById('subheadline').textContent = data.subheadline || '';
+        document.getElementById('owner').textContent = `Owner: ${data.owner || 'Brian + Hermes'}`;
         document.getElementById('updated').textContent = `Last updated: ${prettyTime(data.last_updated)}`;
-
         const container = document.getElementById('modules');
-        const tpl = document.getElementById('card-template');
-        for (const mod of (data.modules || [])) {
-          const node = tpl.content.firstElementChild.cloneNode(true);
-          node.querySelector('h2').textContent = mod.title || mod.id;
-          const badge = node.querySelector('.badge');
-          const status = (mod.status || 'idle').toLowerCase();
-          badge.textContent = status;
-          badge.classList.add(status);
-          node.querySelector('.summary').textContent = mod.summary || '';
-          const list = node.querySelector('ul');
-          if (Array.isArray(mod.items) && mod.items.length) {
-            for (const item of mod.items) {
-              const li = document.createElement('li');
-              li.textContent = item;
-              list.appendChild(li);
-            }
-          } else {
-            list.classList.add('hidden');
-          }
-          container.appendChild(node);
-        }
+        (data.modules || []).forEach((mod) => container.appendChild(renderModule(mod)));
       })
       .catch((err) => {
-        document.getElementById('modules').innerHTML = `<article class="card"><h2>Dashboard unavailable</h2><p class="summary">Could not load dashboard data.</p><p class="footer-note">${String(err)}</p></article>`;
+        document.getElementById('modules').innerHTML = `<article class="panel span-12"><h2>Dashboard unavailable</h2><p class="summary">Could not load dashboard data: ${String(err)}</p></article>`;
       });
   </script>
 </body>

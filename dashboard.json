@@ -1,36 +1,240 @@
 {
-  "owner": "Laia",
-  "headline": "I am Laia, I\u2019ll build this website.",
-  "last_updated": "2026-06-09T14:30:36.079276+00:00",
+  "owner": "Brian + Hermes",
+  "headline": "Hermes keeps the engine warm while you are away.",
+  "subheadline": "A live operations board for email, active deals, and the routines I am running for you.",
+  "last_updated": "2026-06-09T14:36:09.447575+00:00",
   "modules": [
     {
       "id": "email",
-      "title": "Email",
+      "type": "status",
+      "title": "Email radar",
       "status": "idle",
       "summary": "No new non-spam email at the latest check.",
-      "items": []
+      "items": [
+        "Watcher is quiet right now."
+      ]
     },
     {
       "id": "engagements",
-      "title": "Current engagements",
+      "type": "kanban",
+      "title": "Current deals",
       "status": "active",
-      "summary": "Most active: Color Farm / Dharma, ForwardFooding, Yurbban, ZenHammer.",
-      "items": [
-        "Color Farm / Dharma \u2014 platform/app setup, access, recordings, implementation coordination.",
-        "ForwardFooding \u2014 Data Navigator 2.0 data cleanup, taxonomy, imports, demos.",
-        "Yurbban \u2014 proposal / MSA review for AI consulting / fractional CTO support.",
-        "ZenHammer \u2014 payment workflow, NMI / SwipeSum, onboarding and KYC concerns."
+      "summary": "Board view of current company engagements.",
+      "columns": [
+        {
+          "title": "Active now",
+          "cards": [
+            {
+              "title": "Color Farm / Dharma",
+              "body": "Platform/app setup, access coordination, recordings, and implementation motion."
+            },
+            {
+              "title": "ForwardFooding",
+              "body": "Data Navigator 2.0 cleanup, taxonomy, imports, demos, and data structure work."
+            },
+            {
+              "title": "ZenHammer",
+              "body": "Payment workflow work around NMI / SwipeSum, onboarding, and KYC concerns."
+            }
+          ]
+        },
+        {
+          "title": "Proposal / follow-up",
+          "cards": [
+            {
+              "title": "Yurbban",
+              "body": "Proposal / MSA review for conversational AI / fractional CTO support."
+            },
+            {
+              "title": "Airon Heads",
+              "body": "Avatar / virtual assistant estimation and proposal-stage conversations."
+            },
+            {
+              "title": "Mr. Wolf",
+              "body": "Process / product improvement and proposal follow-through."
+            }
+          ]
+        },
+        {
+          "title": "Warm / background",
+          "cards": [
+            {
+              "title": "Jean Cloud / Path Variable",
+              "body": "Ongoing product/content/support relationship and platform conversations."
+            },
+            {
+              "title": "Monostate",
+              "body": "Recurring planning / sprint-style engagement, less hot right now."
+            },
+            {
+              "title": "Uanaknow / Casa Ceiba",
+              "body": "Earlier maintenance / integration and invoicing work, currently quieter."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "watcher",
+      "type": "cards",
+      "title": "What I do every 30 minutes",
+      "status": "active",
+      "summary": "Work cycle for the weekday email watcher running at :00 and :30 from 09:00 through 18:00.",
+      "cards": [
+        {
+          "title": "Step 1",
+          "body": "Poll Gmail via read-only OAuth; do not send, label, archive, or modify anything."
+        },
+        {
+          "title": "Step 2",
+          "body": "Look back across recent mail and compare against Hermes last-seen state, not unread status."
+        },
+        {
+          "title": "Step 3",
+          "body": "Filter obvious noise and spam-like patterns before surfacing anything."
+        },
+        {
+          "title": "Step 4",
+          "body": "Detect likely action items and separate them from FYI mail."
+        },
+        {
+          "title": "Step 5",
+          "body": "Send a Telegram update only when something relevant exists."
+        },
+        {
+          "title": "Step 6",
+          "body": "Refresh this dashboard so the website stays aligned with the latest watcher state."
+        }
+      ]
+    },
+    {
+      "id": "market",
+      "type": "chart",
+      "title": "VOO daily open vs close",
+      "status": "active",
+      "summary": "Latest session 2026-06-09: open $683.71, close $680.97.",
+      "series": [
+        {
+          "date": "2026-05-12",
+          "open": 677.47,
+          "close": 678.67
+        },
+        {
+          "date": "2026-05-13",
+          "open": 678.9,
+          "close": 682.41
+        },
+        {
+          "date": "2026-05-14",
+          "open": 683.74,
+          "close": 687.73
+        },
+        {
+          "date": "2026-05-15",
+          "open": 682.04,
+          "close": 679.44
+        },
+        {
+          "date": "2026-05-18",
+          "open": 680.18,
+          "close": 678.91
+        },
+        {
+          "date": "2026-05-19",
+          "open": 675.56,
+          "close": 674.59
+        },
+        {
+          "date": "2026-05-20",
+          "open": 676.32,
+          "close": 681.57
+        },
+        {
+          "date": "2026-05-21",
+          "open": 679.08,
+          "close": 682.84
+        },
+        {
+          "date": "2026-05-22",
+          "open": 686.1,
+          "close": 685.55
+        },
+        {
+          "date": "2026-05-26",
+          "open": 689.65,
+          "close": 690.01
+        },
+        {
+          "date": "2026-05-27",
+          "open": 690.36,
+          "close": 689.96
+        },
+        {
+          "date": "2026-05-28",
+          "open": 689.76,
+          "close": 693.91
+        },
+        {
+          "date": "2026-05-29",
+          "open": 695.0,
+          "close": 695.49
+        },
+        {
+          "date": "2026-06-01",
+          "open": 694.54,
+          "close": 697.3
+        },
+        {
+          "date": "2026-06-02",
+          "open": 696.06,
+          "close": 698.26
+        },
+        {
+          "date": "2026-06-03",
+          "open": 697.08,
+          "close": 693.36
+        },
+        {
+          "date": "2026-06-04",
+          "open": 691.49,
+          "close": 696.06
+        },
+        {
+          "date": "2026-06-05",
+          "open": 691.71,
+          "close": 678.0
+        },
+        {
+          "date": "2026-06-08",
+          "open": 683.47,
+          "close": 679.68
+        },
+        {
+          "date": "2026-06-09",
+          "open": 683.71,
+          "close": 680.97
+        }
       ]
     },
     {
       "id": "assistant",
+      "type": "cards",
       "title": "Assistant status",
       "status": "active",
-      "summary": "Email watcher runs every 30 minutes from 09:00 to 18:00 and only notifies when something important appears.",
-      "items": [
-        "Gmail access is read-only.",
-        "No email auto-replies.",
-        "GitHub Pages site is live and can be used as a lightweight dashboard."
+      "summary": "The dashboard is meant to mirror current reality whenever work requires an update.",
+      "cards": [
+        {
+          "title": "Email permissions",
+          "body": "Gmail access is read-only OAuth."
+        },
+        {
+          "title": "Automation safety",
+          "body": "No email auto-replies or mailbox mutations are enabled."
+        },
+        {
+          "title": "Sync policy",
+          "body": "When work changes dashboard-relevant state, I should update the website too."
+        }
       ]
     }
   ]
