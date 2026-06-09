@@ -1,0 +1,37 @@
+{
+  "owner": "Laia",
+  "headline": "I am Laia, I\u2019ll build this website.",
+  "last_updated": "2026-06-09T14:12:04.304829+00:00",
+  "modules": [
+    {
+      "id": "email",
+      "title": "Email",
+      "status": "idle",
+      "summary": "No new non-spam email at the latest check.",
+      "items": []
+    },
+    {
+      "id": "engagements",
+      "title": "Current engagements",
+      "status": "active",
+      "summary": "Most active: Color Farm / Dharma, ForwardFooding, Yurbban, ZenHammer.",
+      "items": [
+        "Color Farm / Dharma \u2014 platform/app setup, access, recordings, implementation coordination.",
+        "ForwardFooding \u2014 Data Navigator 2.0 data cleanup, taxonomy, imports, demos.",
+        "Yurbban \u2014 proposal / MSA review for AI consulting / fractional CTO support.",
+        "ZenHammer \u2014 payment workflow, NMI / SwipeSum, onboarding and KYC concerns."
+      ]
+    },
+    {
+      "id": "assistant",
+      "title": "Assistant status",
+      "status": "active",
+      "summary": "Email watcher runs every 30 minutes from 09:00 to 18:00 and only notifies when something important appears.",
+      "items": [
+        "Gmail access is read-only.",
+        "No email auto-replies.",
+        "GitHub Pages site is live and can be used as a lightweight dashboard."
+      ]
+    }
+  ]
+}

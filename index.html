@@ -3,49 +3,205 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laia</title>
+  <title>Laia Dashboard</title>
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #0b1020;
-      --fg: #f8fafc;
+      color-scheme: dark;
+      --bg: #08111f;
+      --panel: rgba(15, 23, 42, 0.82);
+      --panel-border: rgba(255,255,255,0.08);
+      --fg: #e5eefc;
+      --muted: #93a4c3;
       --accent: #8b5cf6;
+      --good: #10b981;
+      --warn: #f59e0b;
+      --idle: #64748b;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top, rgba(139,92,246,0.35), transparent 35%),
-        linear-gradient(160deg, #0b1020, #111827 50%, #0f172a);
+        radial-gradient(circle at top, rgba(139,92,246,0.25), transparent 30%),
+        linear-gradient(180deg, #08111f, #0f172a 45%, #111827);
       color: var(--fg);
+      min-height: 100vh;
     }
-    main {
-      padding: 3rem;
-      border: 1px solid rgba(255,255,255,0.12);
+    .wrap {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+    }
+    .hero, .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
       border-radius: 24px;
-      background: rgba(15, 23, 42, 0.7);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.3);
       backdrop-filter: blur(14px);
-      box-shadow: 0 20px 80px rgba(0,0,0,0.35);
-      text-align: center;
-      max-width: 900px;
-      width: min(90vw, 900px);
+    }
+    .hero {
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
     h1 {
-      margin: 0;
-      font-size: clamp(2rem, 6vw, 4.5rem);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
+      margin: 14px 0 10px;
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
     }
     .accent { color: #c4b5fd; }
+    .sub {
+      color: var(--muted);
+      max-width: 70ch;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      padding: 22px;
+    }
+    .cardhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+    .badge {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff;
+      background: rgba(255,255,255,0.06);
+    }
+    .badge.active { background: rgba(16,185,129,0.18); color: #baf7db; }
+    .badge.attention { background: rgba(245,158,11,0.18); color: #fde3aa; }
+    .badge.idle { background: rgba(100,116,139,0.18); color: #d5dfef; }
+    .summary {
+      color: var(--fg);
+      margin: 12px 0 0;
+      line-height: 1.55;
+    }
+    ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    li + li { margin-top: 8px; }
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .warn {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.2);
+      color: #fde3aa;
+      line-height: 1.5;
+    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>I am <span class="accent">Laia</span>, I’ll build this website.</h1>
-  </main>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Laia dashboard · GitHub Pages</div>
+      <h1 id="headline">I am <span class="accent">Laia</span>, I’ll build this website.</h1>
+      <p class="sub">This site can act as a lightweight dashboard for our work together. I can keep project state, watcher results, and a safe summary of urgent items here.</p>
+      <div class="meta">
+        <span id="owner">Owner: Laia</span>
+        <span id="updated">Last updated: —</span>
+      </div>
+      <div id="privacy-warning" class="warn">Important: GitHub Pages is public. I will only publish safe summary data here unless you explicitly tell me to expose more detail.</div>
+    </section>
+
+    <section id="modules" class="grid"></section>
+    <p class="footer-note">Dashboard data source: <code>dashboard.json</code>. This makes it easy for me to keep the website synced with email and other workflows.</p>
+  </div>
+
+  <template id="card-template">
+    <article class="card">
+      <div class="cardhead">
+        <h2></h2>
+        <span class="badge"></span>
+      </div>
+      <p class="summary"></p>
+      <ul></ul>
+    </article>
+  </template>
+
+  <script>
+    const prettyTime = (value) => {
+      if (!value) return '—';
+      const d = new Date(value);
+      return isNaN(d) ? value : d.toLocaleString();
+    };
+
+    fetch('./dashboard.json', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        document.getElementById('headline').innerHTML = data.headline.replace('Laia', '<span class="accent">Laia</span>');
+        document.getElementById('owner').textContent = `Owner: ${data.owner || 'Laia'}`;
+        document.getElementById('updated').textContent = `Last updated: ${prettyTime(data.last_updated)}`;
+
+        const container = document.getElementById('modules');
+        const tpl = document.getElementById('card-template');
+        for (const mod of (data.modules || [])) {
+          const node = tpl.content.firstElementChild.cloneNode(true);
+          node.querySelector('h2').textContent = mod.title || mod.id;
+          const badge = node.querySelector('.badge');
+          const status = (mod.status || 'idle').toLowerCase();
+          badge.textContent = status;
+          badge.classList.add(status);
+          node.querySelector('.summary').textContent = mod.summary || '';
+          const list = node.querySelector('ul');
+          if (Array.isArray(mod.items) && mod.items.length) {
+            for (const item of mod.items) {
+              const li = document.createElement('li');
+              li.textContent = item;
+              list.appendChild(li);
+            }
+          } else {
+            list.classList.add('hidden');
+          }
+          container.appendChild(node);
+        }
+      })
+      .catch((err) => {
+        document.getElementById('modules').innerHTML = `<article class="card"><h2>Dashboard unavailable</h2><p class="summary">Could not load dashboard data.</p><p class="footer-note">${String(err)}</p></article>`;
+      });
+  </script>
 </body>
 </html>
