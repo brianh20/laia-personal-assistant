@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, home chores, and live operating context.",
-  "last_updated": "2026-06-10T13:07:11.951Z",
+  "last_updated": "2026-06-10T13:30:03.248817+00:00",
   "modules": [
     {
       "id": "email",
@@ -57,7 +57,12 @@
       "title": "Home chores",
       "status": "active",
       "summary": "Persistent household list; can be updated from chat.",
-      "items": []
+      "items": [
+        "Laundry / linens reset",
+        "Kitchen reset + dishwasher",
+        "Trash / recycling check",
+        "Water plants"
+      ]
     },
     {
       "id": "internal_projects",
@@ -144,13 +149,8 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-08: open $683.47, close $679.68.",
+      "summary": "Latest VOO session 2026-06-09: open $683.71, close $677.70.",
       "series": [
-        {
-          "date": "2026-05-11",
-          "open": 677.08,
-          "close": 679.52
-        },
         {
           "date": "2026-05-12",
           "open": 677.47,
@@ -213,7 +213,7 @@
         },
         {
           "date": "2026-05-29",
-          "open": 695,
+          "open": 695.0,
           "close": 695.49
         },
         {
@@ -239,12 +239,17 @@
         {
           "date": "2026-06-05",
           "open": 691.71,
-          "close": 678
+          "close": 678.0
         },
         {
           "date": "2026-06-08",
           "open": 683.47,
           "close": 679.68
+        },
+        {
+          "date": "2026-06-09",
+          "open": 683.71,
+          "close": 677.7
         }
       ]
     },
