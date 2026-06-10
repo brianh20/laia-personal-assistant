@@ -16,7 +16,11 @@ This repository now carries the core durable artifacts that define the current L
 - `ops/hermes/scripts/gmail_readonly_watch.py` — Gmail read-only watcher that feeds dashboard email state
 - `ops/hermes/cron-jobs.yaml` — human-maintained manifest of the scheduled jobs that currently define Laia's automation
 - `ops/hermes/bootstrap_laia.py` — repo-side bootstrap/recovery helper for installing scripts, recreating cron jobs, and checking prerequisites
-- `ops/hermes/pass-layout.json` — canonical pass entry layout for recoverable Laia secrets
+- `ops/hermes/pass-layout.json` — recommended pass entry layout for recoverable Laia secrets
+- `ops/hermes/identity/MEMORY.md` — exported durable Hermes working memory relevant to Laia
+- `ops/hermes/identity/USER.md` — exported durable user preferences/profile relevant to Laia
+- `ops/hermes/export_hermes_identity.py` — refresh helper that copies live Hermes memory into the repo
+- `docs/HERMES_IDENTITY.md` — manual for what counts as Hermes identity and how to keep it portable
 
 ### Manuals
 - `docs/LAIA_RUNTIME_INDEX.md` — this file
@@ -29,7 +33,7 @@ These are required to run Laia, but their secret values should stay outside git:
 - Google OAuth client secret
 - GitHub PAT used for dashboard publishing
 - Cloudflare Worker secret `GITHUB_TOKEN`
-- Hermes config, memory, and other personal state not meant for source control
+- Hermes config and other secret/auth-bearing local state not meant for source control
 
 ## Source-of-truth model
 For dashboard behavior and content sync:

@@ -40,6 +40,10 @@ Laia currently consists of four cooperating parts:
 - `ops/hermes/cron-jobs.yaml`
 - `ops/hermes/bootstrap_laia.py`
 - `ops/hermes/pass-layout.json`
+- `ops/hermes/identity/MEMORY.md`
+- `ops/hermes/identity/USER.md`
+- `ops/hermes/export_hermes_identity.py`
+- `docs/HERMES_IDENTITY.md`
 
 ## 3. Current behavior
 ### Shared editing
@@ -141,7 +145,7 @@ These are design choices worth preserving during any migration:
 ## 7. Known limitations / what still lives outside the repo
 Even after this change, not literally everything about Laia is in git yet.
 The remaining off-repo elements are:
-- Hermes memories/user profile
+- Hermes runtime auth/config state beyond the exported repo snapshots
 - live cron scheduler database/job ids
 - provider auth state/tokens
 - gateway/platform wiring
