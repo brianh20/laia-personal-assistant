@@ -139,8 +139,6 @@ def suggested_reply(row):
     subj = (row.get("subject") or "").lower()
     text = f"{subj} {row.get('snippet', '')}".lower()
 
-    if "aironheads.com" in frm or "virtual assistant" in text or "ifema" in text:
-        return "Thanks Ruben — understood. Let's leave this parked for now and pick it back up if the client re-engages closer to IFEMA."
     if "colorfarmmedia.com" in frm or "dharma" in text:
         return "Thanks Ben — this works for me. I'll come prepared to review the app setup requirements and next implementation steps."
     if "nmi.com" in frm or "swipesum.com" in frm or "payment" in text or "kyc" in text:

@@ -38,15 +38,6 @@ ENGAGEMENT_COLUMNS = [
         ],
     },
     {
-        'title': 'Proposal / follow-up',
-        'cards': [
-            {
-                'title': 'Airon Heads',
-                'body': 'Avatar / virtual assistant estimation and proposal-stage conversations.',
-            },
-        ],
-    },
-    {
         'title': 'Waiting on others',
         'cards': [
             {
