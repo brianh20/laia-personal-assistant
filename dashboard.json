@@ -2,15 +2,17 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-10T15:30:24.296450+00:00",
+  "last_updated": "2026-06-10T16:00:32.722707+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Inbox needing attention",
-      "status": "idle",
-      "summary": "No new non-spam email at the latest check.",
-      "items": []
+      "status": "attention",
+      "summary": "1 new non-spam email(s); 1 likely need attention.",
+      "items": [
+        "Needs reply: Friday Meeting \u2014 Edwin Williams. Hello Peter and Alexa, Is Friday possible for a meeting? If not, Tuesday next week works. -- Edwin Williams Founder and \u2026 Suggested reply: Thanks \u2014 got it. I'll review this and come back with the next step shortly."
+      ]
     },
     {
       "id": "engagements",
@@ -134,7 +136,7 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-10: open $674.32, close $672.30.",
+      "summary": "Latest VOO session 2026-06-10: open $674.32, close $672.99.",
       "series": [
         {
           "date": "2026-05-13",
@@ -234,7 +236,7 @@
         {
           "date": "2026-06-10",
           "open": 674.32,
-          "close": 672.3
+          "close": 672.99
         }
       ]
     },
