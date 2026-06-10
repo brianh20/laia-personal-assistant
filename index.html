@@ -49,6 +49,10 @@
       margin-bottom: 22px;
       position: relative;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
     }
     .hero::after {
       content: '';
@@ -63,51 +67,55 @@
     .eyebrow {
       color: var(--muted);
       text-transform: uppercase;
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       letter-spacing: 0.08em;
-      margin-bottom: 14px;
     }
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4.8vw, 4.2rem);
-      line-height: 1.02;
-      letter-spacing: -0.05em;
-      max-width: 14ch;
+    .brand-block {
+      display: grid;
+      gap: 6px;
     }
-    .accent { color: #c4b5fd; }
-    .sub {
-      margin: 14px 0 0;
-      color: var(--muted);
-      font-size: 1.02rem;
-      line-height: 1.65;
-      max-width: 76ch;
-    }
-    .hero-top {
+    .brand-line {
       display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .meta {
-      display: flex;
+      align-items: baseline;
+      gap: 10px;
       flex-wrap: wrap;
-      gap: 12px 18px;
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 0.94rem;
     }
-    .logout-link {
+    .brand-mark {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      max-width: 58ch;
+    }
+    .header-status {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .status-pill, .logout-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 14px;
+      padding: 9px 12px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.05);
       color: var(--fg);
-      text-decoration: none;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       white-space: nowrap;
+    }
+    .status-pill {
+      color: var(--muted);
+    }
+    .logout-link {
+      text-decoration: none;
       transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
     }
     .logout-link:hover {
@@ -115,12 +123,20 @@
       border-color: rgba(255,255,255,0.2);
       transform: translateY(-1px);
     }
-    @media (max-width: 640px) {
-      .hero-top {
+    @media (max-width: 820px) {
+      .hero {
+        padding: 18px;
         flex-direction: column;
+        align-items: flex-start;
       }
-      .logout-link {
+      .header-status {
+        justify-content: flex-start;
+      }
+    }
+    @media (max-width: 640px) {
+      .status-pill, .logout-link {
         width: 100%;
+        justify-content: flex-start;
       }
     }
     .overview {
@@ -366,17 +382,18 @@
 <body>
   <div class="wrap">
     <section class="hero">
-      <div class="hero-top">
-        <div>
-          <div class="eyebrow">Hermes ops room</div>
-          <h1 id="headline">Hermes keeps the <span class="accent">engine warm</span>.</h1>
-          <p id="subheadline" class="sub">A live operations board for email, active deals, and the routines I am running for you.</p>
+      <div class="brand-block">
+        <div class="brand-line">
+          <span class="brand-mark">Laia</span>
+          <span class="eyebrow">private ops board</span>
         </div>
-        <a class="logout-link" href="/cdn-cgi/access/logout">Sign out</a>
+        <div id="subheadline" class="sub">Email, deals, and live operating context.</div>
       </div>
-      <div class="meta">
-        <span id="owner">Owner: Brian + Hermes</span>
-        <span id="updated">Last updated: —</span>
+      <div class="header-status">
+        <span id="owner" class="status-pill">Owner: Brian + Hermes</span>
+        <span id="updated" class="status-pill">Last updated: —</span>
+        <span id="header-email" class="status-pill">Email: loading…</span>
+        <a class="logout-link" href="/cdn-cgi/access/logout">Sign out</a>
       </div>
     </section>
 
@@ -557,10 +574,11 @@
     fetch('./dashboard.json', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
-        document.getElementById('headline').innerHTML = (data.headline || '').replace('engine warm', '<span class="accent">engine warm</span>');
         document.getElementById('subheadline').textContent = data.subheadline || '';
         document.getElementById('owner').textContent = `Owner: ${data.owner || 'Brian + Hermes'}`;
-        document.getElementById('updated').textContent = `Last updated: ${prettyTime(data.last_updated)}`;
+        document.getElementById('updated').textContent = `Updated: ${prettyTime(data.last_updated)}`;
+        const emailModule = (data.modules || []).find((mod) => mod.id === 'email');
+        document.getElementById('header-email').textContent = emailModule ? `Email: ${emailModule.summary || emailModule.status || '—'}` : 'Email: —';
         const container = document.getElementById('modules');
         (data.modules || []).forEach((mod) => container.appendChild(renderModule(mod)));
       })
