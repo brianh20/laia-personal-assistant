@@ -82,7 +82,8 @@
       "summary": "Persistent list of internal products we are building together.",
       "items": [
         "Secrets",
-        "TextChest"
+        "TextChest",
+        "Daily report of tasks performed"
       ]
     },
     {
