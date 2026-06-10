@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-10T16:00:32.722707+00:00",
+  "last_updated": "2026-06-10T22:01:18.782614+00:00",
   "modules": [
     {
       "id": "email",
@@ -71,6 +71,21 @@
       "summary": "Nightly work log. 2 days saved; newest first.",
       "entries": [
         {
+          "date": "2026-06-10",
+          "title": "Laia dashboard, recovery, and Hermes chat",
+          "summary": "June 10 focused on making Laia more operationally reliable: secret recovery was formalized, stale dashboard state was cleaned up, and a native Hermes chat integration was built and pushed for the custom dashboard.",
+          "bullets": [
+            "Installed pass and GnuPG, initialized a local Laia password store, and captured the current required Laia credentials without exposing secret values.",
+            "Enhanced the Laia bootstrap and recovery tooling so secrets can be captured into pass and materialized back out later, with HERMES_HOME override support and updated recovery documentation.",
+            "Removed stale Home chores and Secrets dashboard content from the authoritative dashboard state and fixed the generator and allowlists so those modules should not reappear unexpectedly.",
+            "Verified the cleaned dashboard modules and pushed the resulting Laia repository changes to GitHub.",
+            "Added a follow-up chore to read private PR #147 in levin-riegner/state-of-all-marketplace.",
+            "Implemented a native Talk to Hermes panel in the custom Laia dashboard with session list, new conversation, branch, message history, and chat input UI.",
+            "Added Cloudflare Worker proxy routes for Hermes status, sessions, messages, chat, and fork operations while keeping the Hermes API key out of the browser.",
+            "Verified the Hermes dashboard chat work with static tests, Worker and inline JavaScript syntax checks, Wrangler dry-run build, and local browser preview; pushed commit 020e90d, with deployment still dependent on Cloudflare credentials and a reachable Hermes API URL."
+          ]
+        },
+        {
           "date": "2026-06-09",
           "title": "Laia dashboard redesign and persistence groundwork",
           "summary": "Refined Laia into a lighter, denser operational dashboard, improved email triage behavior, and laid the foundation for persistent shared lists and daily work history.",
@@ -82,18 +97,6 @@
             "Created and syntax-checked a Cloudflare backend endpoint intended to save dashboard list edits by committing dashboard.json back to GitHub.",
             "Investigated Cloudflare static-assets deployment limits after secret binding failed, documenting the need for a real Worker or compatible Functions deployment shape.",
             "Verified key changes with Python compile checks, Node syntax checks, local browser preview, and git commits/pushes to the remote repository."
-          ]
-        },
-        {
-          "date": "2026-06-10",
-          "title": "Dashboard editing, sync, and nightly history",
-          "summary": "Reworked Laia so shared edits and dashboard automation stop fighting each other, then added the new nightly report log surface.",
-          "bullets": [
-            "Converted the dashboard editing path to use a Worker-backed shared read/write flow instead of stale local-only state.",
-            "Simplified Home chores into an add/remove todo interaction and kept Internal projects editable across devices.",
-            "Fixed the Gmail watcher dashboard publisher so it writes from fresh remote state and no longer depends on a stale local checkout.",
-            "Made remote repo state authoritative for dashboard updates.",
-            "Added a browsable daily report log module to the dashboard and prepared the midnight summary flow."
           ]
         }
       ]
@@ -136,7 +139,7 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-10: open $674.32, close $672.99.",
+      "summary": "Latest VOO session 2026-06-10: open $674.32, close $667.05.",
       "series": [
         {
           "date": "2026-05-13",
@@ -236,7 +239,7 @@
         {
           "date": "2026-06-10",
           "open": 674.32,
-          "close": 672.99
+          "close": 667.05
         }
       ]
     },
