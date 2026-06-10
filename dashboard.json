@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, home chores, and live operating context.",
-  "last_updated": "2026-06-10T12:48:28.337350+00:00",
+  "last_updated": "2026-06-10T12:51:38.809711+00:00",
   "modules": [
     {
       "id": "email",
@@ -91,8 +91,22 @@
       "type": "history",
       "title": "Daily report log",
       "status": "active",
-      "summary": "Nightly work log. 1 day saved; newest first.",
+      "summary": "Nightly work log. 2 days saved; newest first.",
       "entries": [
+        {
+          "date": "2026-06-09",
+          "title": "Laia dashboard redesign and persistence groundwork",
+          "summary": "Refined Laia into a lighter, denser operational dashboard, improved email triage behavior, and laid the foundation for persistent shared lists and daily work history.",
+          "bullets": [
+            "Reworked the Laia dashboard into a lighter editorial layout with a compact utility header, improved module titles, and better above-the-fold density.",
+            "Updated email radar logic to suppress self-authored outgoing mail, focus on incoming user-addressed messages, and include suggested replies for likely actionable email.",
+            "Added persistent dashboard data support for Home chores and Internal projects, seeding internal projects with Secrets and TextChest.",
+            "Built direct editing UI for personal list modules and moved the persistence design toward a Cloudflare/GitHub-backed shared state instead of browser-local storage.",
+            "Created and syntax-checked a Cloudflare backend endpoint intended to save dashboard list edits by committing dashboard.json back to GitHub.",
+            "Investigated Cloudflare static-assets deployment limits after secret binding failed, documenting the need for a real Worker or compatible Functions deployment shape.",
+            "Verified key changes with Python compile checks, Node syntax checks, local browser preview, and git commits/pushes to the remote repository."
+          ]
+        },
         {
           "date": "2026-06-10",
           "title": "Dashboard editing, sync, and nightly history",
