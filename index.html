@@ -416,13 +416,29 @@
     .recent-price .delta.positive { color: #1f7d4d; }
     .recent-price .delta.negative { color: #b45309; }
 
-    .editor-tools {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .todo-list {
+      display: grid;
+      gap: 10px;
       margin-top: 12px;
     }
-    .editor-btn {
+    .todo-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--panel-tint);
+      border: 1px solid rgba(109, 94, 252, 0.10);
+      box-shadow: var(--shadow-soft);
+    }
+    .todo-text {
+      line-height: 1.45;
+      font-size: 0.95rem;
+    }
+    .todo-remove,
+    .todo-add-btn,
+    .todo-reset-btn {
       appearance: none;
       border: 1px solid rgba(71, 85, 105, 0.14);
       background: rgba(255,255,255,0.96);
@@ -430,15 +446,16 @@
       border-radius: 12px;
       padding: 8px 11px;
       font: inherit;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       box-shadow: var(--shadow-soft);
     }
-    .editor-btn.secondary {
+    .todo-remove,
+    .todo-reset-btn {
       color: var(--muted);
     }
-    .editor-panel {
+    .todo-controls {
       display: grid;
       gap: 10px;
       margin-top: 12px;
@@ -447,24 +464,27 @@
       background: rgba(255,255,255,0.82);
       border: 1px solid rgba(71, 85, 105, 0.10);
     }
-    .editor-help {
+    .todo-help {
       color: var(--muted);
       font-size: 0.84rem;
       line-height: 1.45;
     }
-    .editor-textarea {
+    .todo-add-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+    }
+    .todo-input {
       width: 100%;
-      min-height: 140px;
-      resize: vertical;
       border-radius: 14px;
       border: 1px solid rgba(71, 85, 105, 0.14);
       background: #fff;
       color: var(--fg);
-      padding: 12px;
+      padding: 11px 12px;
       font: inherit;
       line-height: 1.45;
     }
-    .editor-status {
+    .todo-status {
       color: var(--muted);
       font-size: 0.84rem;
       min-height: 1.2em;
@@ -613,27 +633,65 @@
 
     const EDITABLE_MODULES = new Set(['home_chores', 'internal_projects']);
     const storageKey = (id) => `laia-module-${id}`;
+    let dashboardState = null;
 
     async function loadRemoteDashboard() {
       try {
+        const res = await fetch('/api/dashboard-state', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.dashboard || data;
+      } catch {
         const res = await fetch('./dashboard.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
+      }
+    }
+
+    function getModuleItems(mod) {
+      const liveModule = (dashboardState?.modules || []).find((candidate) => candidate.id === mod.id);
+      return liveModule?.items || mod.items || [];
+    }
+
+    function cacheItems(modId, items) {
+      localStorage.setItem(storageKey(modId), JSON.stringify(items));
+    }
+
+    function getCachedItems(modId) {
+      try {
+        const raw = localStorage.getItem(storageKey(modId));
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : null;
       } catch {
         return null;
       }
     }
 
-    function getSavedItems(mod) {
-      if (!EDITABLE_MODULES.has(mod.id)) return mod.items || [];
-      try {
-        const raw = localStorage.getItem(storageKey(mod.id));
-        if (!raw) return mod.items || [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : (mod.items || []);
-      } catch {
-        return mod.items || [];
-      }
+    function clearItems(modId) {
+      localStorage.removeItem(storageKey(modId));
+    }
+
+    function setModuleItems(modId, items) {
+      if (!dashboardState?.modules) return;
+      const target = dashboardState.modules.find((candidate) => candidate.id === modId);
+      if (target) target.items = items;
+    }
+
+    function applyDashboardState(data) {
+      dashboardState = structuredClone ? structuredClone(data) : JSON.parse(JSON.stringify(data));
+    }
+
+    function syncHeader(data) {
+      document.getElementById('headline').textContent = data.headline || 'Editorial ops surface';
+      document.getElementById('subheadline').textContent = data.subheadline || '';
+      document.getElementById('owner').textContent = data.owner || 'Brian + Hermes';
+      document.getElementById('updated').textContent = prettyTime(data.last_updated);
+
+      const emailModule = (data.modules || []).find((mod) => mod.id === 'email');
+      const projectModule = (data.modules || []).find((mod) => mod.id === 'internal_projects');
+      document.getElementById('header-email').textContent = emailModule ? (emailModule.summary || emailModule.status || '—') : '—';
+      document.getElementById('header-projects').textContent = projectModule ? ((projectModule.items || []).slice(0, 2).join(' · ') || '—') : '—';
     }
 
     async function persistModuleItems(modId, items) {
@@ -646,105 +704,109 @@
       let data = {};
       try { data = JSON.parse(text); } catch {}
       if (!res.ok) throw new Error(data.error || text || `HTTP ${res.status}`);
-      localStorage.setItem(storageKey(modId), JSON.stringify(items));
+      cacheItems(modId, items);
+      if (data.dashboard) {
+        applyDashboardState(data.dashboard);
+        syncHeader(data.dashboard);
+      } else {
+        setModuleItems(modId, items);
+      }
       return data;
     }
 
-    function cacheItems(modId, items) {
-      localStorage.setItem(storageKey(modId), JSON.stringify(items));
-    }
-
-    function clearItems(modId) {
-      localStorage.removeItem(storageKey(modId));
-    }
-
-    function parseTextareaList(value) {
-      return value
-        .split('\n')
-        .map((line) => line.replace(/^\s*[-*]\s*/, '').trim())
-        .filter(Boolean);
-    }
-
-    function formatTextareaList(items) {
-      return (items || []).join('\n');
-    }
-
-    function attachListEditor(node, mod) {
+    function attachTodoEditor(node, mod) {
       const content = node.querySelector('.content');
       const itemsWrap = content.querySelector('.status-items');
       if (!itemsWrap) return;
+      itemsWrap.className = 'todo-list';
 
-      const tools = document.createElement('div');
-      tools.className = 'editor-tools';
-      tools.innerHTML = `
-        <button type="button" class="editor-btn">Edit list</button>
-        <button type="button" class="editor-btn secondary">Reset to default</button>
-      `;
-
-      const panel = document.createElement('div');
-      panel.className = 'editor-panel';
-      panel.hidden = true;
-      panel.innerHTML = `
-        <div class="editor-help">One item per line. On Cloudflare, save writes through the site backend so the list can sync across devices.</div>
-        <textarea class="editor-textarea"></textarea>
-        <div class="editor-tools">
-          <button type="button" class="editor-btn">Save</button>
-          <button type="button" class="editor-btn secondary">Cancel</button>
+      const controls = document.createElement('div');
+      controls.className = 'todo-controls';
+      controls.innerHTML = `
+        <div class="todo-help">Simple shared list: add items, remove items, and the backend keeps the canonical dashboard state in sync.</div>
+        <div class="todo-add-row">
+          <input class="todo-input" type="text" placeholder="Add an item" />
+          <button type="button" class="todo-add-btn">Add</button>
+          <button type="button" class="todo-reset-btn">Reset</button>
         </div>
-        <div class="editor-status"></div>
+        <div class="todo-status"></div>
       `;
 
-      const [editBtn, resetBtn] = tools.querySelectorAll('button');
-      const textarea = panel.querySelector('.editor-textarea');
-      const [saveBtn, cancelBtn] = panel.querySelectorAll('.editor-tools button');
-      const status = panel.querySelector('.editor-status');
+      const input = controls.querySelector('.todo-input');
+      const addBtn = controls.querySelector('.todo-add-btn');
+      const resetBtn = controls.querySelector('.todo-reset-btn');
+      const status = controls.querySelector('.todo-status');
 
-      function rerenderItems(items) {
-        itemsWrap.innerHTML = '';
-        (items || []).forEach((item) => {
-          const div = document.createElement('div');
-          div.className = 'status-item';
-          div.textContent = item;
-          itemsWrap.appendChild(div);
-        });
-      }
-
-      editBtn.addEventListener('click', () => {
-        textarea.value = formatTextareaList(getSavedItems(mod));
-        status.textContent = '';
-        panel.hidden = false;
-      });
-
-      cancelBtn.addEventListener('click', () => {
-        panel.hidden = true;
-      });
-
-      saveBtn.addEventListener('click', async () => {
-        const items = parseTextareaList(textarea.value);
-        saveBtn.disabled = true;
+      async function saveItems(items, successMessage) {
+        addBtn.disabled = true;
+        resetBtn.disabled = true;
         status.textContent = 'Saving…';
         try {
           await persistModuleItems(mod.id, items);
           rerenderItems(items);
-          status.textContent = 'Saved and queued for cross-device sync.';
-          panel.hidden = true;
+          status.textContent = successMessage;
         } catch (err) {
           cacheItems(mod.id, items);
+          setModuleItems(mod.id, items);
           rerenderItems(items);
-          status.textContent = `Remote save unavailable. Kept locally in this browser only: ${String(err.message || err)}`;
+          status.textContent = `Remote sync unavailable. Showing browser-local fallback only: ${String(err.message || err)}`;
         } finally {
-          saveBtn.disabled = false;
+          addBtn.disabled = false;
+          resetBtn.disabled = false;
+        }
+      }
+
+      function currentItems() {
+        return getModuleItems(mod);
+      }
+
+      function rerenderItems(items) {
+        itemsWrap.innerHTML = '';
+        (items || []).forEach((item, index) => {
+          const row = document.createElement('div');
+          row.className = 'todo-row';
+          const label = document.createElement('div');
+          label.className = 'todo-text';
+          label.textContent = item;
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'todo-remove';
+          remove.textContent = 'Remove';
+          remove.addEventListener('click', () => {
+            const next = currentItems().filter((_, i) => i !== index);
+            saveItems(next, 'Removed.');
+          });
+          row.appendChild(label);
+          row.appendChild(remove);
+          itemsWrap.appendChild(row);
+        });
+      }
+
+      addBtn.addEventListener('click', () => {
+        const value = input.value.trim();
+        if (!value) return;
+        const next = [...currentItems(), value];
+        input.value = '';
+        saveItems(next, 'Added.');
+      });
+
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          addBtn.click();
         }
       });
 
-      resetBtn.addEventListener('click', async () => {
+      resetBtn.addEventListener('click', () => {
         clearItems(mod.id);
-        rerenderItems(mod.items || []);
-        status.textContent = 'Reset to repo default.';
+        const defaults = mod.items || [];
+        saveItems(defaults, 'Reset to default list.');
       });
 
-      content.appendChild(tools);
-      content.appendChild(panel);
+      const cached = getCachedItems(mod.id);
+      if (cached && !currentItems().length) setModuleItems(mod.id, cached);
+      rerenderItems(currentItems());
+      content.appendChild(controls);
     }
 
     function makeStatusItems(items) {
@@ -887,7 +949,7 @@
       badge.textContent = status;
       badge.classList.add(status);
       const content = node.querySelector('.content');
-      const effectiveItems = getSavedItems(mod);
+      const effectiveItems = getModuleItems(mod);
 
       if (mod.type === 'kanban') content.appendChild(makeKanban(mod.columns));
       else if (mod.type === 'cards') content.appendChild(makeCards(mod.cards));
@@ -895,7 +957,7 @@
       else content.appendChild(makeStatusItems(effectiveItems));
 
       if (EDITABLE_MODULES.has(mod.id) && mod.type === 'status') {
-        attachListEditor(node, { ...mod, items: effectiveItems });
+        attachTodoEditor(node, { ...mod, items: mod.items || [] });
       }
 
       return node;
@@ -926,19 +988,10 @@
       });
     }
 
-    fetch('./dashboard.json', { cache: 'no-store' })
-      .then((res) => res.json())
+    loadRemoteDashboard()
       .then((data) => {
-        document.getElementById('headline').textContent = data.headline || 'Editorial ops surface';
-        document.getElementById('subheadline').textContent = data.subheadline || '';
-        document.getElementById('owner').textContent = data.owner || 'Brian + Hermes';
-        document.getElementById('updated').textContent = prettyTime(data.last_updated);
-
-        const emailModule = (data.modules || []).find((mod) => mod.id === 'email');
-        const projectModule = (data.modules || []).find((mod) => mod.id === 'internal_projects');
-        document.getElementById('header-email').textContent = emailModule ? (emailModule.summary || emailModule.status || '—') : '—';
-        document.getElementById('header-projects').textContent = projectModule ? ((projectModule.items || []).slice(0, 2).join(' · ') || '—') : '—';
-
+        applyDashboardState(data);
+        syncHeader(data);
         mount(data.modules || []);
       })
       .catch((err) => {

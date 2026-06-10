@@ -34,6 +34,36 @@ async function github(path, token, init = {}) {
   return data;
 }
 
+function decodeBase64Json(content) {
+  const binary = atob(content.replace(/\n/g, ''));
+  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+function encodeJsonBase64(data) {
+  const text = JSON.stringify(data, null, 2) + '\n';
+  const bytes = new TextEncoder().encode(text);
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+async function loadDashboard(token) {
+  const current = await github(`/repos/${OWNER}/${REPO}/contents/dashboard.json?ref=${BRANCH}`, token);
+  return {
+    sha: current.sha,
+    dashboard: decodeBase64Json(current.content),
+  };
+}
+
+async function getDashboard(env) {
+  if (!env.GITHUB_TOKEN) {
+    return json({ error: 'Missing GITHUB_TOKEN secret.' }, 500);
+  }
+  const { dashboard } = await loadDashboard(env.GITHUB_TOKEN);
+  return json({ ok: true, dashboard });
+}
+
 async function updateDashboard(request, env) {
   if (!env.GITHUB_TOKEN) {
     return json({ error: 'Missing GITHUB_TOKEN secret.' }, 500);
@@ -50,37 +80,43 @@ async function updateDashboard(request, env) {
     return json({ error: 'items must be an array of strings.' }, 400);
   }
 
-  const contentPath = `/repos/${OWNER}/${REPO}/contents/dashboard.json?ref=${BRANCH}`;
-  const current = await github(contentPath, env.GITHUB_TOKEN);
-  const decoded = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(current.content.replace(/\n/g, '')), c => c.charCodeAt(0))));
-  const target = (decoded.modules || []).find((m) => m.id === moduleId);
+  const { sha, dashboard } = await loadDashboard(env.GITHUB_TOKEN);
+  const target = (dashboard.modules || []).find((m) => m.id === moduleId);
   if (!target) {
     return json({ error: 'Module not found in dashboard.' }, 404);
   }
 
   target.items = items;
-  decoded.last_updated = new Date().toISOString();
-
-  const updated = JSON.stringify(decoded, null, 2) + '\n';
-  const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(updated)));
+  dashboard.last_updated = new Date().toISOString();
 
   const result = await github(`/repos/${OWNER}/${REPO}/contents/dashboard.json`, env.GITHUB_TOKEN, {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       message: `chore: update ${moduleId} from dashboard UI`,
-      content: encoded,
-      sha: current.sha,
+      content: encodeJsonBase64(dashboard),
+      sha,
       branch: BRANCH,
     }),
   });
 
-  return json({ ok: true, commit: result.commit?.sha || null });
+  return json({ ok: true, commit: result.commit?.sha || null, dashboard });
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/api/dashboard-state') {
+      if (request.method !== 'GET') {
+        return json({ error: 'Method not allowed.' }, 405);
+      }
+      try {
+        return await getDashboard(env);
+      } catch (err) {
+        return json({ error: String(err.message || err) }, 500);
+      }
+    }
 
     if (url.pathname === '/api/dashboard-update') {
       if (request.method !== 'POST') {
