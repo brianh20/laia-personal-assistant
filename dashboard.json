@@ -2,15 +2,20 @@
   "owner": "Brian + Hermes",
   "headline": "Hermes keeps the engine warm while you are away.",
   "subheadline": "A live operations board for email, active deals, and the routines I am running for you.",
-  "last_updated": "2026-06-09T17:00:28.878760+00:00",
+  "last_updated": "2026-06-10T07:00:20.946798+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Email radar",
-      "status": "idle",
-      "summary": "No new non-spam email at the latest check.",
-      "items": []
+      "status": "attention",
+      "summary": "4 new non-spam email(s); 4 likely need attention.",
+      "items": [
+        "A new email likely needs attention. Details were kept off the public dashboard.",
+        "A new email likely needs attention. Details were kept off the public dashboard.",
+        "A new email likely needs attention. Details were kept off the public dashboard.",
+        "A new email likely needs attention. Details were kept off the public dashboard."
+      ]
     },
     {
       "id": "engagements",
@@ -110,8 +115,13 @@
       "type": "chart",
       "title": "VOO daily open vs close",
       "status": "active",
-      "summary": "Latest session 2026-06-09: open $683.71, close $668.13.",
+      "summary": "Latest session 2026-06-08: open $683.47, close $679.68.",
       "series": [
+        {
+          "date": "2026-05-11",
+          "open": 677.08,
+          "close": 679.52
+        },
         {
           "date": "2026-05-12",
           "open": 677.47,
@@ -206,11 +216,6 @@
           "date": "2026-06-08",
           "open": 683.47,
           "close": 679.68
-        },
-        {
-          "date": "2026-06-09",
-          "open": 683.71,
-          "close": 668.13
         }
       ]
     },
