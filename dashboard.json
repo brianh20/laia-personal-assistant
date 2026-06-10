@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, home chores, and live operating context.",
-  "last_updated": "2026-06-10T11:00:39.293020+00:00",
+  "last_updated": "2026-06-10T11:03:08.798Z",
   "modules": [
     {
       "id": "email",
@@ -71,10 +71,7 @@
       "status": "active",
       "summary": "Persistent household list; can be updated from chat.",
       "items": [
-        "Laundry / linens reset",
-        "Kitchen reset + dishwasher",
-        "Trash / recycling check",
-        "Water plants"
+        "asd"
       ]
     },
     {
@@ -195,7 +192,7 @@
         },
         {
           "date": "2026-05-29",
-          "open": 695.0,
+          "open": 695,
           "close": 695.49
         },
         {
@@ -221,7 +218,7 @@
         {
           "date": "2026-06-05",
           "open": 691.71,
-          "close": 678.0
+          "close": 678
         },
         {
           "date": "2026-06-08",
