@@ -1,7 +1,7 @@
 const OWNER = 'brianh20';
 const REPO = 'laia-personal-assistant';
 const BRANCH = 'main';
-const ALLOWED_MODULES = new Set(['internal_projects']);
+const ALLOWED_MODULES = new Set(['internal_projects', 'chores']);
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {

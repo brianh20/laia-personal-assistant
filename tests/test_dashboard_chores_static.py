@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DASHBOARD = json.loads((ROOT / "dashboard.json").read_text())
 UPDATER = (ROOT / "ops/hermes/scripts/update_laia_dashboard.py").read_text()
+WORKER = (ROOT / "_worker.js").read_text()
 
 
 def module(module_id):
@@ -22,3 +23,8 @@ def test_updater_preserves_or_recreates_chores():
     assert "DEFAULT_CHORES" in UPDATER
     assert "existing_chores" in UPDATER
     assert "'id': 'chores'" in UPDATER
+
+
+def test_chores_are_editable_from_dashboard_ui():
+    assert "'chores'" in WORKER
+    assert "'chores'" in (ROOT / "index.html").read_text()

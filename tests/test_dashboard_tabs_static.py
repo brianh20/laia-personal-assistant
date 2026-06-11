@@ -36,3 +36,25 @@ def test_chores_are_restored_on_dashboard():
     assert 'id="chores-section"' in INDEX
     assert 'id="chores-zone"' in INDEX
     assert "chores: 'chores'" in INDEX
+
+
+def test_dashboard_order_is_engagements_internal_projects_chores_market():
+    dashboard_start = INDEX.index('id="tab-dashboard"')
+    chat_start = INDEX.index('id="tab-chat"')
+    dashboard_block = INDEX[dashboard_start:chat_start]
+    assert dashboard_block.index('id="engagement-section"') < dashboard_block.index('id="personal-section"')
+    assert dashboard_block.index('id="personal-section"') < dashboard_block.index('id="chores-section"')
+    assert dashboard_block.index('id="chores-section"') < dashboard_block.index('id="market-section"')
+
+
+def test_work_history_tab_is_far_right():
+    nav_start = INDEX.index('<nav class="tab-nav"')
+    nav_end = INDEX.index('</nav>', nav_start)
+    nav_block = INDEX[nav_start:nav_end]
+    assert nav_block.index('data-tab-target="history"') > nav_block.index('data-tab-target="agent"')
+    assert 'tab-spacer' in nav_block
+
+
+def test_agent_config_blocks_are_side_by_side():
+    assert 'agent-grid compact-grid' in INDEX
+    assert "grid-template-columns: repeat(2, minmax(0, 1fr));" in INDEX

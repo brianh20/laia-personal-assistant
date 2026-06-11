@@ -183,6 +183,10 @@
       border-color: transparent;
       box-shadow: 0 10px 24px rgba(109,94,252,0.20);
     }
+    .tab-spacer {
+      flex: 1 1 auto;
+      min-width: 24px;
+    }
     .tab-panel {
       display: none;
     }
@@ -204,6 +208,12 @@
     .agent-grid {
       display: grid;
       grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .compact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
       align-items: start;
     }
@@ -768,6 +778,7 @@
       .main-grid,
       .overview-grid,
       .agent-grid,
+      .compact-grid,
       .split-boards {
         grid-template-columns: 1fr;
       }
@@ -801,6 +812,7 @@
       .brand-stack { gap: 8px; }
       .eyebrow { display: none; }
       .logout-link { justify-content: center; }
+      .tab-spacer { display: none; }
       .tab-nav { position: static; }
       .tab-button { flex: 1 1 calc(50% - 10px); }
     }
@@ -826,8 +838,9 @@
         <nav class="tab-nav" aria-label="Laia sections">
           <button class="tab-button active" type="button" data-tab-target="dashboard">Dashboard</button>
           <button class="tab-button" type="button" data-tab-target="chat">Chat</button>
-          <button class="tab-button" type="button" data-tab-target="history">Work history</button>
           <button class="tab-button" type="button" data-tab-target="agent">Agent config</button>
+          <span class="tab-spacer" aria-hidden="true"></span>
+          <button class="tab-button" type="button" data-tab-target="history">Work history</button>
         </nav>
 
         <section class="tab-panel active" id="tab-dashboard" data-tab-panel="dashboard">
@@ -842,19 +855,19 @@
                 <h3 class="section-title">Engagements</h3>
                 <div id="engagement-zone"></div>
               </section>
-            </div>
-            <div class="secondary-column">
-              <section id="market-section">
-                <h3 class="section-title">Market</h3>
-                <div id="market-zone"></div>
-              </section>
               <section id="personal-section">
                 <h3 class="section-title">Internal projects</h3>
                 <div id="personal-zone" class="stacked-panels"></div>
               </section>
+            </div>
+            <div class="secondary-column">
               <section id="chores-section">
                 <h3 class="section-title">Chores</h3>
                 <div id="chores-zone" class="stacked-panels"></div>
+              </section>
+              <section id="market-section">
+                <h3 class="section-title">Market</h3>
+                <div id="market-zone"></div>
               </section>
             </div>
           </div>
@@ -900,10 +913,10 @@
 
         <section class="tab-panel" id="tab-agent" data-tab-panel="agent">
           <p class="tab-intro">Agent operations, configuration notes, internal projects, and reminders that govern how Laia/Hermes should behave.</p>
-          <div id="agent-config-zone" class="agent-grid">
+          <div id="agent-config-zone" class="agent-grid compact-grid">
             <section id="rail-section">
               <h3 class="section-title">Agent rail</h3>
-              <div id="rail-zone" class="stacked-panels"></div>
+              <div id="rail-zone" class="stacked-panels compact-grid"></div>
             </section>
           </div>
         </section>
@@ -933,7 +946,7 @@
       return isNaN(d) ? value : d.toLocaleString();
     };
 
-    const EDITABLE_MODULES = new Set(['internal_projects']);
+    const EDITABLE_MODULES = new Set(['internal_projects', 'chores']);
     const NOOP_EMAIL_SUMMARY = 'No new non-spam email at the latest check.';
     const TAB_STORAGE_KEY = 'laia-active-tab';
     const storageKey = (id) => `laia-module-${id}`;
