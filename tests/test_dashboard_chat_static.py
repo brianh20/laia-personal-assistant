@@ -27,3 +27,17 @@ def test_chat_ui_guides_missing_backend_configuration():
     assert "Hermes backend not connected" in INDEX
     assert "HERMES_API_BASE" in INDEX
     assert "HERMES_API_KEY" in INDEX
+
+
+def test_chat_new_session_handles_object_errors_and_optimistic_insert():
+    assert "function formatHermesValue" in INDEX
+    assert "function formatHermesError" in INDEX
+    assert "upsertHermesSession" in INDEX
+    assert "hermesState.configured = true" in INDEX
+    assert "New conversation ready." in INDEX
+    assert "String(err.message || err)" not in INDEX
+
+
+def test_worker_formats_upstream_object_errors():
+    assert "function formatError" in WORKER
+    assert "throw new Error(formatError" in WORKER

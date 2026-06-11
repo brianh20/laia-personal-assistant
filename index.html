@@ -946,7 +946,8 @@
   <script>
     const prettyTime = (value) => {
       if (!value) return '—';
-      const d = new Date(value);
+      const numeric = typeof value === 'number' ? value : (typeof value === 'string' && /^\d+(\.\d+)?$/.test(value) ? Number(value) : null);
+      const d = numeric !== null ? new Date(numeric < 100000000000 ? numeric * 1000 : numeric) : new Date(value);
       return isNaN(d) ? value : d.toLocaleString();
     };
 
@@ -969,9 +970,24 @@
       if (Array.isArray(data)) return data;
       return [];
     };
-
     const sessionIdOf = (session) => session?.id || session?.session_id || session?.sessionId;
     const sessionTitleOf = (session) => session?.title || session?.name || sessionIdOf(session) || 'Untitled chat';
+
+    function formatHermesValue(value, fallback = 'Hermes request failed.') {
+      if (!value) return fallback;
+      if (typeof value === 'string') return value;
+      if (value instanceof Error) return value.message || fallback;
+      if (typeof value === 'object') {
+        const nested = value.error || value.message || value.detail || value.raw;
+        if (nested && nested !== value) return formatHermesValue(nested, fallback);
+        try { return JSON.stringify(value); } catch { return fallback; }
+      }
+      return String(value);
+    }
+
+    function formatHermesError(err, fallback = 'Hermes request failed.') {
+      return formatHermesValue(err, fallback);
+    }
 
     function setHermesStatus(message, mode = 'idle') {
       const line = document.getElementById('hermes-status-line');
@@ -1004,9 +1020,23 @@
         const fallback = path.startsWith('/api/hermes/')
           ? 'Hermes backend not connected. Configure HERMES_API_BASE and HERMES_API_KEY in Cloudflare.'
           : `HTTP ${res.status}`;
-        throw new Error(data.error || data.message || (text.trim().startsWith('<') ? fallback : text) || fallback);
+        throw new Error(formatHermesError(data.error || data.message || (text.trim().startsWith('<') ? fallback : text), fallback));
       }
       return data;
+    }
+
+    function upsertHermesSession(session) {
+      const id = sessionIdOf(session);
+      if (!id) return;
+      const normalized = {
+        id,
+        title: sessionTitleOf(session),
+        updated_at: session.updated_at || session.last_active || session.started_at || new Date().toISOString(),
+        ...session,
+      };
+      const existingIndex = hermesState.sessions.findIndex((candidate) => sessionIdOf(candidate) === id);
+      if (existingIndex >= 0) hermesState.sessions.splice(existingIndex, 1, normalized);
+      else hermesState.sessions.unshift(normalized);
     }
 
     function renderHermesSessions() {
@@ -1112,14 +1142,37 @@
     }
 
     async function createHermesSession(title = 'Dashboard chat') {
+      if (hermesState.busy) return;
+      hermesState.busy = true;
+      setHermesEnabled(false);
       setHermesStatus('Creating conversation…', 'idle');
-      const data = await hermesFetch('/api/hermes/sessions', {
-        method: 'POST',
-        body: JSON.stringify({ title }),
-      });
-      const id = pickCreatedSessionId(data);
-      await loadHermesSessions();
-      if (id) await selectHermesSession(id);
+      try {
+        const data = await hermesFetch('/api/hermes/sessions', {
+          method: 'POST',
+          body: JSON.stringify({ title }),
+        });
+        const created = data?.session || data;
+        const id = pickCreatedSessionId(data);
+        if (!id) throw new Error('Hermes created a session but did not return a session id.');
+        upsertHermesSession({ ...created, id, title: created?.title || title });
+        hermesState.configured = true;
+        hermesState.activeSessionId = id;
+        localStorage.setItem('laia-hermes-active-session', id);
+        renderHermesSessions();
+        renderHermesMessages([]);
+        setHermesEnabled(true);
+        setHermesStatus('New conversation ready.', 'active');
+        loadHermesSessions().catch((err) => {
+          console.warn('Session list refresh failed', err);
+          if (!hermesState.activeSessionId) setHermesStatus(`Session list refresh failed: ${formatHermesError(err)}`, 'attention');
+        });
+      } catch (err) {
+        setHermesStatus(`New conversation failed: ${formatHermesError(err)}`, 'attention');
+        appendHermesMessage('system', `New conversation failed: ${formatHermesError(err)}`);
+      } finally {
+        hermesState.busy = false;
+        setHermesEnabled(Boolean(hermesState.activeSessionId));
+      }
     }
 
     function extractAssistantText(data) {
@@ -1156,8 +1209,8 @@
         });
         setHermesStatus('Ready.', 'active');
       } catch (err) {
-        appendHermesMessage('system', `Chat failed: ${String(err.message || err)}`);
-        setHermesStatus(`Chat failed: ${String(err.message || err)}`, 'attention');
+        appendHermesMessage('system', `Chat failed: ${formatHermesError(err)}`);
+        setHermesStatus(`Chat failed: ${formatHermesError(err)}`, 'attention');
       } finally {
         hermesState.busy = false;
         setHermesEnabled(Boolean(hermesState.activeSessionId));
@@ -1178,8 +1231,8 @@
     }
 
     function initHermesChat() {
-      document.getElementById('hermes-new-session')?.addEventListener('click', () => createHermesSession().catch((err) => setHermesStatus(String(err.message || err), 'attention')));
-      document.getElementById('hermes-fork-session')?.addEventListener('click', () => forkHermesSession().catch((err) => setHermesStatus(String(err.message || err), 'attention')));
+      document.getElementById('hermes-new-session')?.addEventListener('click', () => createHermesSession().catch((err) => setHermesStatus(formatHermesError(err), 'attention')));
+      document.getElementById('hermes-fork-session')?.addEventListener('click', () => forkHermesSession().catch((err) => setHermesStatus(formatHermesError(err), 'attention')));
       document.getElementById('hermes-chat-form')?.addEventListener('submit', (event) => {
         event.preventDefault();
         const input = document.getElementById('hermes-chat-input');
@@ -1195,7 +1248,7 @@
       });
       loadHermesSessions().catch((err) => {
         setHermesEnabled(false);
-        const message = String(err.message || err);
+        const message = formatHermesError(err);
         const configHint = 'Set HERMES_API_BASE and HERMES_API_KEY.';
         setHermesStatus(message.includes('Hermes backend not connected') ? message : `Hermes backend not connected: ${message}. ${configHint}`, 'attention');
         renderHermesSessions();
@@ -1351,7 +1404,7 @@
           cacheItems(mod.id, items);
           setModuleItems(mod.id, items);
           rerenderItems(items);
-          status.textContent = `Remote sync unavailable. Showing browser-local fallback only: ${String(err.message || err)}`;
+          status.textContent = `Remote sync unavailable. Showing browser-local fallback only: ${formatHermesError(err)}`;
         } finally {
           addBtn.disabled = false;
           resetBtn.disabled = false;

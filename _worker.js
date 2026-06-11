@@ -22,6 +22,22 @@ function requireHermes(env) {
   return null;
 }
 
+function formatError(value, fallback = 'Request failed.') {
+  if (!value) return fallback;
+  if (typeof value === 'string') return value;
+  if (value instanceof Error) return value.message || fallback;
+  if (typeof value === 'object') {
+    const nested = value.error || value.message || value.detail || value.raw;
+    if (nested && nested !== value) return formatError(nested, fallback);
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return fallback;
+    }
+  }
+  return String(value);
+}
+
 async function hermes(path, env, init = {}) {
   const missing = requireHermes(env);
   if (missing) throw new Error(missing.error);
@@ -42,7 +58,7 @@ async function hermes(path, env, init = {}) {
   } catch {
     data = { raw: text };
   }
-  if (!res.ok) throw new Error(data.error || data.message || text || `Hermes HTTP ${res.status}`);
+  if (!res.ok) throw new Error(formatError(data.error || data.message || text, `Hermes HTTP ${res.status}`));
   return data;
 }
 
@@ -57,7 +73,7 @@ async function hermesStatus(env) {
     const health = await hermes('/health', env, { headers: {} });
     return json({ ok: true, configured: true, health });
   } catch (err) {
-    return json({ ok: false, configured: true, error: String(err.message || err) }, 502);
+    return json({ ok: false, configured: true, error: formatError(err) }, 502);
   }
 }
 
@@ -212,7 +228,7 @@ export default {
       try {
         return await getDashboard(env);
       } catch (err) {
-        return json({ error: String(err.message || err) }, 500);
+        return json({ error: formatError(err) }, 500);
       }
     }
 
@@ -223,7 +239,7 @@ export default {
       try {
         return await updateDashboard(request, env);
       } catch (err) {
-        return json({ error: String(err.message || err) }, 500);
+        return json({ error: formatError(err) }, 500);
       }
     }
 
@@ -235,7 +251,7 @@ export default {
       try {
         return await hermesSessions(request, env);
       } catch (err) {
-        return json({ error: String(err.message || err) }, 502);
+        return json({ error: formatError(err) }, 502);
       }
     }
 
@@ -244,7 +260,7 @@ export default {
       try {
         return await hermesMessages(request, env);
       } catch (err) {
-        return json({ error: String(err.message || err) }, 502);
+        return json({ error: formatError(err) }, 502);
       }
     }
 
@@ -253,7 +269,7 @@ export default {
       try {
         return await hermesChat(request, env);
       } catch (err) {
-        return json({ error: String(err.message || err) }, 502);
+        return json({ error: formatError(err) }, 502);
       }
     }
 
@@ -262,7 +278,7 @@ export default {
       try {
         return await hermesFork(request, env);
       } catch (err) {
-        return json({ error: String(err.message || err) }, 502);
+        return json({ error: formatError(err) }, 502);
       }
     }
 
