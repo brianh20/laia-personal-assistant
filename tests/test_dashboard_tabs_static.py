@@ -22,3 +22,17 @@ def test_history_and_agent_have_dedicated_zones():
     assert 'id="agent-config-zone"' in INDEX
     assert "daily_log: 'history'" in INDEX
     assert "watcher: 'agentConfig'" in INDEX
+
+
+def test_internal_projects_are_on_dashboard_not_agent_config():
+    dashboard_start = INDEX.index('id="tab-dashboard"')
+    chat_start = INDEX.index('id="tab-chat"')
+    dashboard_block = INDEX[dashboard_start:chat_start]
+    assert 'id="personal-section"' in dashboard_block
+    assert "internal_projects: 'personal'" in INDEX
+
+
+def test_chores_are_restored_on_dashboard():
+    assert 'id="chores-section"' in INDEX
+    assert 'id="chores-zone"' in INDEX
+    assert "chores: 'chores'" in INDEX

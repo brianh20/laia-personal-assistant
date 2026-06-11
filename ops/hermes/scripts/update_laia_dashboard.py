@@ -61,6 +61,10 @@ DEFAULT_INTERNAL_PROJECTS = [
     'TextChest',
 ]
 
+DEFAULT_CHORES = [
+    'Pending: rerun cloudflared connector with sudo so it installs as a root/system service and survives reboot before user login.',
+]
+
 
 def load_existing_dashboard():
     if not PAT_PATH.exists():
@@ -146,6 +150,7 @@ def build_dashboard(args):
 
     existing_email = find_module(existing, 'email')
     existing_projects = find_module(existing, 'internal_projects')
+    existing_chores = find_module(existing, 'chores')
     existing_daily_log = find_module(existing, 'daily_log')
 
     email_status = args.email_status if args.email_status is not None else existing_email.get('status', 'idle')
@@ -155,6 +160,7 @@ def build_dashboard(args):
     email_items = json.loads(args.email_items) if args.email_items is not None else existing_email.get('items', [])
 
     project_items = existing_projects.get('items') or DEFAULT_INTERNAL_PROJECTS
+    chore_items = existing_chores.get('items') or DEFAULT_CHORES
     daily_log_entries = merge_daily_log(existing_daily_log.get('entries') or [], args.daily_log_entry)
     daily_log_summary = (
         f"Nightly work log. {len(daily_log_entries)} day{'s' if len(daily_log_entries) != 1 else ''} saved; newest first."
@@ -189,8 +195,16 @@ def build_dashboard(args):
                 'type': 'status',
                 'title': 'Internal projects',
                 'status': 'active',
-                'summary': 'Persistent list of internal products we are building together.',
+                'summary': 'Persistent list of internal products and infrastructure follow-ups we are building together.',
                 'items': project_items,
+            },
+            {
+                'id': 'chores',
+                'type': 'status',
+                'title': 'Chores',
+                'status': 'active' if chore_items else 'idle',
+                'summary': 'Loose operational follow-ups to keep visible on the main dashboard.',
+                'items': chore_items,
             },
             {
                 'id': 'daily_log',
