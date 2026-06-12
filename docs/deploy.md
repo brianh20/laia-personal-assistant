@@ -17,11 +17,13 @@ For a local async demo without Hermes, set `MOCK_HERMES_DELAY_MS` and `MOCK_HERM
 ## Cloudflare Pages
 
 - Build command: `npm run build`
+- Do not use `exit 0` as the build command; Wrangler expects `dist/` to exist before deploy.
 - Output directory: `dist`
 - Worker entry: `worker/index.ts`
 - API routes: `/api/*`
 - Keep Cloudflare Access enabled on the site.
 - Keep `HERMES_API_KEY` and `HERMES_API_BASE` configured only as Worker secrets/server-side variables.
+- Keep the deployed Worker name aligned with `wrangler.jsonc` (`laia-personal-assistant`) so deploys target the correct service.
 
 ## Rollback
 

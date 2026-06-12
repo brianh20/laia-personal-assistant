@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "laia-dashboard",
+  "name": "laia-personal-assistant",
   "main": "worker/index.ts",
   "compatibility_date": "2026-06-12",
   "assets": {
