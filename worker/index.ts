@@ -281,13 +281,11 @@ export function createMessageRunTransaction({ sessionId, content }: { sessionId:
 }
 
 async function ensureSeeded(env: Env) {
-  const existing = await env.DB.prepare('SELECT COUNT(*) AS count FROM dashboard_modules').first<{ count: number }>();
-  if ((existing?.count ?? 0) > 0) return;
   const seed = createInitialDashboardSeed();
   await env.DB.batch(
-    seed.modules.map((module) =>
+    seed.modules.flatMap((module) => [
       env.DB.prepare(
-        `INSERT INTO dashboard_modules (id, type, title, status, summary, sort_order, zone, payload_json, updated_at)
+        `INSERT OR IGNORE INTO dashboard_modules (id, type, title, status, summary, sort_order, zone, payload_json, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       ).bind(
         module.id,
@@ -300,7 +298,12 @@ async function ensureSeeded(env: Env) {
         JSON.stringify(module.payload),
         module.updatedAt,
       ),
-    ),
+      env.DB.prepare('UPDATE dashboard_modules SET sort_order = ?, zone = ? WHERE id = ?').bind(
+        module.sortOrder,
+        module.zone,
+        module.id,
+      ),
+    ]),
   );
 }
 
