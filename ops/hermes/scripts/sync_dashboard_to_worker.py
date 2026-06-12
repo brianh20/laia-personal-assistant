@@ -10,7 +10,7 @@ ZONE_MAP = {
     'email': ('dashboard-secondary', 10),
     'engagements': ('dashboard-primary', 20),
     'internal_projects': ('dashboard-primary', 30),
-    'chores': ('dashboard-primary', 40),
+    'chores': ('dashboard-secondary', 40),
     'market': ('dashboard-secondary', 50),
     'watcher': ('agent-left', 60),
     'assistant': ('agent-right', 70),

@@ -1,14 +1,27 @@
 import type { DashboardModule, DashboardState } from '../types/dashboard';
 
+const FALLBACK_PLACEMENT: Record<string, { zone: DashboardModule['zone']; sortOrder: number }> = {
+  email: { zone: 'dashboard-secondary', sortOrder: 10 },
+  engagements: { zone: 'dashboard-primary', sortOrder: 20 },
+  internal_projects: { zone: 'dashboard-primary', sortOrder: 30 },
+  chores: { zone: 'dashboard-secondary', sortOrder: 40 },
+  market: { zone: 'dashboard-secondary', sortOrder: 50 },
+  watcher: { zone: 'agent-left', sortOrder: 60 },
+  assistant: { zone: 'agent-right', sortOrder: 70 },
+  daily_log: { zone: 'history', sortOrder: 80 },
+};
+
 function normaliseModule(input: any): DashboardModule {
+  const id = String(input.id);
+  const fallback = FALLBACK_PLACEMENT[id] ?? { zone: 'dashboard-secondary', sortOrder: 999 };
   return {
-    id: String(input.id),
+    id,
     type: input.type,
     title: String(input.title),
     status: String(input.status ?? 'idle'),
     summary: input.summary ? String(input.summary) : '',
-    zone: input.zone,
-    sortOrder: Number(input.sortOrder ?? input.sort_order ?? 0),
+    zone: input.zone ?? fallback.zone,
+    sortOrder: Number(input.sortOrder ?? input.sort_order ?? fallback.sortOrder),
     payload: input.payload ?? JSON.parse(input.payload_json ?? '{}'),
     updatedAt: String(input.updatedAt ?? input.updated_at ?? new Date().toISOString()),
   };

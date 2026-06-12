@@ -48,7 +48,7 @@ export function DashboardTab({ dashboard, onDashboardChange }: DashboardTabProps
     <section className="tab-panel active" id="tab-dashboard">
       {error ? <div className="inline-error">{error}</div> : null}
       <div className="main-grid">
-        <div className="primary-column">
+        <div className="primary-column" data-testid="dashboard-primary-column">
           {primary.map((module) => (
             <div
               key={module.id}
@@ -66,7 +66,7 @@ export function DashboardTab({ dashboard, onDashboardChange }: DashboardTabProps
             </div>
           ))}
         </div>
-        <div className="secondary-column">
+        <div className="secondary-column" data-testid="dashboard-secondary-column">
           {secondary.map((module) => renderModule(module, onDashboardChange))}
         </div>
       </div>

@@ -32,7 +32,7 @@ const modules: DashboardModule[] = [
     type: 'status',
     title: 'Chores',
     status: 'active',
-    zone: 'dashboard-primary',
+    zone: 'dashboard-secondary',
     sortOrder: 40,
     summary: 'Loose operational follow-ups.',
     payload: { items: ['Rerun cloudflared connector with sudo.'] },
@@ -127,8 +127,10 @@ describe('Laia React layout', () => {
 
     const sections = screen.getAllByTestId(/module-/).map((node) => node.getAttribute('data-module-id'));
     expect(sections.indexOf('engagements')).toBeLessThan(sections.indexOf('internal_projects'));
-    expect(sections.indexOf('internal_projects')).toBeLessThan(sections.indexOf('chores'));
-    expect(sections.indexOf('chores')).toBeLessThan(sections.indexOf('market'));
+    const secondarySections = within(screen.getByTestId('dashboard-secondary-column'))
+      .getAllByTestId(/module-/)
+      .map((node) => node.getAttribute('data-module-id'));
+    expect(secondarySections).toEqual(['chores', 'market']);
   });
 
   it('renders a full-width chat workspace and keeps work history visually separated at the far right', () => {

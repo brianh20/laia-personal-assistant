@@ -83,7 +83,7 @@ const ZONES: Record<string, { zone: ModuleZone; sortOrder: number }> = {
   email: { zone: 'dashboard-secondary', sortOrder: 10 },
   engagements: { zone: 'dashboard-primary', sortOrder: 20 },
   internal_projects: { zone: 'dashboard-primary', sortOrder: 30 },
-  chores: { zone: 'dashboard-primary', sortOrder: 40 },
+  chores: { zone: 'dashboard-secondary', sortOrder: 40 },
   market: { zone: 'dashboard-secondary', sortOrder: 50 },
   watcher: { zone: 'agent-left', sortOrder: 60 },
   assistant: { zone: 'agent-right', sortOrder: 70 },
